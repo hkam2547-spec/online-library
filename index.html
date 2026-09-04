@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ห้องสมุดออนไลน์</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-gradient">
+        <div class="login-card">
+            <div class="logo-icon">📚</div>
+            <h2>ห้องสมุดออนไลน์</h2>
+            <p>วิชาคณิตศาสตร์ ประจำห้องเรียน</p>
+            
+            <div class="input-group">
+                <span class="icon">👤</span>
+                <input type="text" id="studentId" placeholder="รหัสนักศึกษา">
+            </div>
+            
+            <div class="input-group">
+                <span class="icon">🔒</span>
+                <input type="password" id="password" placeholder="รหัสผ่าน">
+            </div>
+            
+            <button onclick="login()">เข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+   <script>
+        function login() {
+            const studentId = document.getElementById('studentId').value;
+            if(studentId) {
+                // บันทึกรหัสนักศึกษาลงในเครื่อง (Local Storage)
+                localStorage.setItem('currentUser', studentId);
+                // เปลี่ยนหน้าไปยัง books.html
+                window.location.href = 'books.html'; 
+            } else {
+                alert('กรุณากรอกรหัสนักศึกษา');
+            }
+        }
+    </script>
+</body>
+</html>

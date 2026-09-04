@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อ่านหนังสือ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='books.html'">⬅</button>
+        <h2 id="topTitle">ชื่อหนังสือ</h2>
+    </div>
+
+    <div class="read-container">
+        <div class="book-cover-large" style="background: linear-gradient(135deg, #00c6ff, #0072ff);">📘</div>
+        <h2 id="displayTitle">ชื่อหนังสือ</h2>
+        <p id="displayTeacher" class="teacher-name">ชื่อครู</p>
+        
+        <button id="readBtn" class="primary-btn" onclick="startReading()">อ่านตอนนี้</button>
+    </div>
+
+    <script>
+        // ดึงข้อมูลที่ส่งมาจากหน้าเลือกหนังสือมาแสดงผล
+        const title = localStorage.getItem('currentBookTitle');
+        const teacher = localStorage.getItem('currentBookTeacher');
+        const url = localStorage.getItem('currentBookUrl');
+        
+        document.getElementById('topTitle').innerText = title;
+        document.getElementById('displayTitle').innerText = title;
+        document.getElementById('displayTeacher').innerText = teacher;
+
+        function startReading() {
+            // 1. บันทึกเวลาที่เริ่มกดอ่าน (มิลลิวินาที)
+            const startTime = Date.now();
+            localStorage.setItem('readStartTime', startTime);
+            
+            // 2. เปิดหน้าเว็บหนังสือในแท็บใหม่ (ลิงก์ที่เราตั้งไว้)
+            window.open(url, '_blank');
+            
+            // 3. เปลี่ยนปุ่มเป็นสีเขียวและเปลี่ยนข้อความสำหรับกดจบการอ่าน
+            const btn = document.getElementById('readBtn');
+            btn.innerText = "บันทึกเวลา และเสร็จสิ้นการอ่าน";
+            btn.style.backgroundColor = "#4CAF50";
+            btn.onclick = finishReading; // เปลี่ยนหน้าที่ของปุ่ม
+        }
+
+        function finishReading() {
+            const startTime = localStorage.getItem('readStartTime');
+            if(startTime) {
+                const endTime = Date.now();
+                // นำเวลาจบ - เวลาเริ่ม แล้วแปลงเป็น "นาที"
+                let timeSpent = Math.floor((endTime - startTime) / 60000); 
+                
+                // สร้างข้อมูลประวัติการอ่าน
+                const historyRecord = {
+                    studentId: localStorage.getItem('currentUser'),
+                    bookTitle: title,
+                    date: new Date().toLocaleString('th-TH'),
+                    minutes: timeSpent
+                };
+
+                // ดึงประวัติเก่ามา (ถ้ามี) แล้วยัดประวัติใหม่เพิ่มเข้าไป
+                let historyList = JSON.parse(localStorage.getItem('readingHistory')) || [];
+                historyList.push(historyRecord);
+                localStorage.setItem('readingHistory', JSON.stringify(historyList));
+
+                alert(`บันทึกสำเร็จ! คุณใช้เวลาอ่านไป ${timeSpent} นาที`);
+                
+                // เคลียร์เวลาเริ่มและกลับไปหน้ารวม
+                localStorage.removeItem('readStartTime');
+                window.location.href = 'books.html';
+            }
+        }
+    </script>
+</body>
+</html>

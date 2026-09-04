@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เลือกอ่านหนังสือ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    
+    <div class="top-bar">
+        <h2>เลือกอ่านหนังสือ</h2>
+        <div class="actions">
+            <button class="icon-btn" onclick="window.location.href='history.html'">🕒</button>
+            <button class="icon-btn" onclick="logout()">🚪</button>
+        </div>
+    </div>
+
+   <div class="book-grid">
+        <!-- เล่มที่ 1: ลิงก์ไปที่ Clear Notebooks -->
+        <div class="book-card" onclick="goToRead('สรุปโน้ตเรียน', 'Clear Notebooks', 'https://www.clearnotebooks.com/th/notebooks/2010623')">
+            <div class="book-cover" style="background: linear-gradient(135deg, #00c6ff, #0072ff);">📘</div>
+            <div class="book-info">
+                <h3>สรุปโน้ตเรียน</h3>
+                <p>Clear Notebooks</p>
+            </div>
+        </div>
+
+        <!-- เล่มที่ 2: ลิงก์ไปที่ SmartMathPro -->
+        <div class="book-card" onclick="goToRead('คณิตศาสตร์: เวกเตอร์', 'SmartMathPro', 'https://www.smartmathpro.com/article/math-vector/')">
+            <div class="book-cover" style="background: linear-gradient(135deg, #11998e, #38ef7d);">📗</div>
+            <div class="book-info">
+                <h3>คณิตศาสตร์: เวกเตอร์</h3>
+                <p>SmartMathPro</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ระบบป้องกันคนยังไม่ล็อกอินแอบเข้า
+        if(!localStorage.getItem('currentUser')) {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // ฟังก์ชันรับค่าหนังสือที่กด แล้วส่งไปหน้าอ่าน
+        function goToRead(title, teacher, url) {
+            localStorage.setItem('currentBookTitle', title);
+            localStorage.setItem('currentBookTeacher', teacher);
+            localStorage.setItem('currentBookUrl', url);
+            window.location.href = 'read.html';
+        }
+    </script>
+</body>
+</html>

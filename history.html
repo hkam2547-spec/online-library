@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการอ่านหนังสือ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <div class="top-bar">
+        <div style="display: flex; align-items: center;">
+            <button class="back-btn" onclick="window.location.href='books.html'">⬅</button>
+            <h2>ประวัติการอ่านหนังสือ</h2>
+        </div>
+    </div>
+
+    <div class="history-container">
+        <div id="historyList">
+            <!-- ข้อมูลประวัติจะถูกแสดงตรงนี้โดยอัตโนมัติ -->
+        </div>
+    </div>
+
+    <script>
+        // ป้องกันคนยังไม่ล็อกอินแอบเข้า
+        if(!localStorage.getItem('currentUser')) {
+            window.location.href = 'index.html';
+        }
+
+        const currentUser = localStorage.getItem('currentUser');
+        const historyContainer = document.getElementById('historyList');
+        
+        // ดึงประวัติการอ่านจาก LocalStorage
+        let historyList = JSON.parse(localStorage.getItem('readingHistory')) || [];
+
+        // กรองเฉพาะประวัติของรหัสนักศึกษาที่กำลังล็อกอินอยู่
+        const userHistory = historyList.filter(item => item.studentId === currentUser);
+
+        if(userHistory.length === 0) {
+            historyContainer.innerHTML = '<p class="no-history">ยังไม่มีประวัติการอ่านหนังสือ</p>';
+        } else {
+            let htmlContent = '';
+            
+            // คำนวณเวลารวมทั้งหมดที่อ่านวันนี้ (หรือทั้งหมด)
+            let totalMinutes = userHistory.reduce((sum, item) => sum + item.minutes, 0);
+            
+            // แสดงสรุปเวลาอ่านวันนี้ด้านบน
+            htmlContent += `<div class="summary-box">เวลาอ่านวันนี้: <span class="highlight-time">${totalMinutes} นาที</span></div>`;
+
+            // วนลูปสร้างรายการประวัติทีละรายการ
+            userHistory.forEach(item => {
+                // สมมติเวลาเข้า-ออก (จำลองจากเวลาที่บันทึก)
+                htmlContent += `
+                    <div class="history-card">
+                        <div class="history-title">
+                            📚 ${item.studentId} อ่าน '${item.bookTitle}'
+                        </div>
+                        <div class="history-time-info">
+                            📖 เข้าเวลา ${item.date} | ใช้เวลา ${item.minutes} นาที
+                        </div>
+                        <div class="history-daily">
+                            เวลาอ่านวันนี้: ${item.minutes} นาที
+                        </div>
+                    </div>
+                `;
+            });
+            historyContainer.innerHTML = htmlContent;
+        }
+    </script>
+</body>
+</html>
